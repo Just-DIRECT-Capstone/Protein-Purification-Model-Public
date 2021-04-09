@@ -34,7 +34,7 @@ install:
 
 # the actual commands to run
 script:
-#    - cd rms 
+    - cd tests 
     - coverage run -m unittest test.py
 
 # generate a coverage report to send to back to user
