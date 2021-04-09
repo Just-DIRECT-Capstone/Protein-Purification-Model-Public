@@ -1,4 +1,6 @@
 # Protein-Purification-Model-Public
+[![Build Status](https://travis-ci.com/Just-DIRECT-Capstone/Protein-Purification-Model-Public.svg?branch=main)](https://travis-ci.com/Just-DIRECT-Capstone/Protein-Purification-Model-Public)
+[![Coverage Status](https://coveralls.io/repos/github/Just-DIRECT-Capstone/Protein-Purification-Model-Public/badge.svg?branch=main)](https://coveralls.io/github/Just-DIRECT-Capstone/Protein-Purification-Model-Public?branch=main)
 
 ### Objective: Create and characterize a model to predict yield and purity from isotherm parameters and operating conditions.
 
