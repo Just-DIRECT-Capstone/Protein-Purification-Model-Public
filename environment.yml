@@ -2,5 +2,8 @@ name: JUST
 channels:
   - defaults
 dependencies:
-  - numpy
   - coverage
+  - matplotlib=3.1.1
+  - numba=0.46.0
+  - numpy=1.17.3
+  - python=3.7.5
