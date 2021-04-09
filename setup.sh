@@ -11,7 +11,7 @@ cd tests
 coverage run -m unittest test.py
 echo " "
 
-echo "If errors, please open an issue on our github. https://github.com/FermentAI/Reactor-Modeling-Sandbox/issues"
+echo "If errors, please open an issue on our github. https://https://github.com/Just-DIRECT-Capstone/Protein-Purification-Model-Public/issues"
 echo " "
 
 echo " all done!"
