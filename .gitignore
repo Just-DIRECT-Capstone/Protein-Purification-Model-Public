@@ -1,3 +1,6 @@
-# Josh's code here
 .vscode
+*.ipynb_checkpoints/
+*__pycache__/
+
+# Josh's code here
 just-private/
