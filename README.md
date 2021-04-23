@@ -9,3 +9,7 @@ Use Case 1: Generate testing and training datasets with different sampling strat
 Use Case 2: Pass datasets to surrogate model to predict yield and purity.
 
 Use Case 3: Characterize model error based on isotherm used and number/type of impurity.
+
+
+### Gantt Chart for workflow over the quarter
+![alt text](https://live.staticflickr.com/65535/51125897043_cce5c0d6bd_o.jpg)
