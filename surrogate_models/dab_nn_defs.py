@@ -4,11 +4,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 import tensorflow_datasets as tfds
 import tensorflow_probability as tfp
-from utils import *
-
-filename = 'mol_res_scan_results.csv'
-data = load_data(filename)
-
+from datetime import datetime
 
 def get_train_and_test_splits(x,y, train_size, batch_size=1):
     # We prefetch with a buffer the same size as the dataset because th dataset
@@ -56,32 +52,9 @@ def posterior(kernel_size, bias_size, dtype=None):
     )
     return posterior_model
 
-hidden_units = [8, 8]
-learning_rate = 0.001
 
-
-def run_experiment(model, loss, train_dataset, test_dataset):
-
-    model.compile(
-        optimizer=keras.optimizers.RMSprop(learning_rate=learning_rate),
-        loss=loss,
-        metrics=[keras.metrics.RootMeanSquaredError()],
-    )
-
-    print("Start training the model...")
-    model.fit(train_dataset, epochs=num_epochs, validation_data=test_dataset)
-    print("Model training finished.")
-    _, rmse = model.evaluate(train_dataset, verbose=0)
-    print(f"Train RMSE: {round(rmse, 3)}")
-
-    print("Evaluating model performance...")
-    _, rmse = model.evaluate(test_dataset, verbose=0)
-    print(f"Test RMSE: {round(rmse, 3)}")
-
-FEATURE_NAMES = data.columns[4:]
-TARGET_NAMES = data.columns[2:4]
-
-def create_model_inputs():
+# create layer for all model inputs
+def create_model_inputs(FEATURE_NAMES):
     inputs = {}
     for feature_name in FEATURE_NAMES:
         inputs[feature_name] = layers.Input(
@@ -89,7 +62,8 @@ def create_model_inputs():
         )
     return inputs
 
-def create_model_outputs():
+# create layer with mean and std for all outputs
+def create_model_outputs(TARGET_NAMES):
     outputs = {}
     for feature_name in TARGET_NAMES:
         outputs[feature_name] = tfp.layers.IndependentNormal(1,
@@ -97,8 +71,8 @@ def create_model_outputs():
         )
     return outputs
 
-def create_probablistic_bnn_model(train_size, n_outputs):
-    inputs = create_model_inputs()
+def create_probablistic_bnn_model(FEATURE_NAMES, TARGET_NAMES, train_size, n_outputs, hidden_units):
+    inputs = create_model_inputs(FEATURE_NAMES)
     features = keras.layers.concatenate(list(inputs.values()))
     features = layers.BatchNormalization()(features)
 
@@ -116,9 +90,9 @@ def create_probablistic_bnn_model(train_size, n_outputs):
     # to produce the parameters of the distribution.
     # We set units=2 to learn both the mean and the variance of the Normal distribution.
     distribution_params = layers.Dense(units=2)(features)
-    outputs = [out(distribution_params) for out in create_model_outputs().values()]
+    outputs = [out(distribution_params) for out in create_model_outputs(TARGET_NAMES).values()]
 
-    model = keras.Model(inputs=inputs, outputs=outputs)
+    model = keras.Model(inputs=inputs, outputs=outputs, name = 'PBNN')
     return model
 
 
@@ -126,17 +100,25 @@ def negative_loglikelihood(targets, estimated_distribution):
     return -estimated_distribution.log_prob(targets)
 
 
+def run_experiment(model, loss, learning_rate, num_epochs, train_dataset, test_dataset):
 
-X = data[data.columns[4:]]
-y = data[data.columns[2:4]]
-
-dataset_size = X.shape[0]
-batch_size = int(dataset_size*0.1)
-train_size = int(dataset_size * 0.85)
-train_dataset, test_dataset = get_train_and_test_splits(X,y, train_size, batch_size)
+    logdir="surrogate_models/.logs/"+ model.name +'_'+ datetime.now().strftime("%Y%m%d-%H%M%S")
+    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
 
 
-num_epochs = 1000
-prob_bnn_model = create_probablistic_bnn_model(train_size, y.shape[1])
-run_experiment(prob_bnn_model, negative_loglikelihood, train_dataset, test_dataset)
+    model.compile(
+        optimizer=keras.optimizers.RMSprop(learning_rate=learning_rate),
+        loss=loss,
+        metrics=[keras.metrics.RootMeanSquaredError()]
+    )
+
+    print("Start training the model...")
+    model.fit(train_dataset, epochs=num_epochs, validation_data=test_dataset, callbacks=[tensorboard_callback])
+    print("Model training finished.")
+    rmse = model.evaluate(train_dataset, verbose=0)
+    print(f"Train RMSE: {round(np.sum(rmse), 3)}")
+
+    print("Evaluating model performance...")
+    rmse = model.evaluate(test_dataset, verbose=0)
+    print(f"Test RMSE: {round(np.sum(rmse), 3)}")
 

@@ -1,6 +1,7 @@
 .vscode
 *.ipynb_checkpoints/
 *__pycache__/
+*.logs
 
 # Josh's code here
 just-private/
