@@ -3,6 +3,6 @@
 *__pycache__/
 *.logs
 *.hypertuning
-
+*__pycache__
 # Josh's code here
 just-private/
