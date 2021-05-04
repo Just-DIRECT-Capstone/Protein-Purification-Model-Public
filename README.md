@@ -12,4 +12,4 @@ Use Case 3: Characterize model error based on isotherm used and number/type of i
 
 
 ### Gantt Chart for workflow over the quarter
-![alt text](https://live.staticflickr.com/65535/51125897043_cce5c0d6bd_o.jpg)
+![alt text](https://live.staticflickr.com/65535/51149776670_2a2c6a3c95_c.jpg)
