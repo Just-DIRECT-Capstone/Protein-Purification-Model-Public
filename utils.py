@@ -7,8 +7,12 @@ from sklearn.model_selection import train_test_split
 
 def load_data(filename, filepath = ['just-private','data']):
     path = os.getcwd()
-    p2f = os.path.join(path,*filepath,filename) 
-    return pd.read_csv(p2f, index_col = 0)
+    p2f = os.path.join(path,*filepath,filename)
+    try:
+        return pd.read_csv(p2f, index_col = 0)
+    except Exception as e:
+        raise e
+
 
 # custom train test split to ensure cuts from the same run are all in the same size
 def chroma_train_test_split(data : pd.DataFrame, x : list, y : list, keep_cuts = True, test_size=0.20, random_state=None):

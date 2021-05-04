@@ -34,8 +34,7 @@ install:
 
 # the actual commands to run
 script:
-    - cd tests 
-    - coverage run -m unittest test.py
+    - coverage run -m unittest tests/test.py
 
 # generate a coverage report to send to back to user
 after_success:
