@@ -46,19 +46,24 @@ def create_model_inputs(FEATURE_NAMES):
     return inputs
 
 # create layer with mean and std for all outputs
-def create_model_outputs(TARGET_NAMES,features):
+def create_model_outputs_prob(TARGET_NAMES,features):
     
     # Create a probabilistic output (Normal distribution), and use the `Dense` layer
     # to produce the parameters of the distribution.
     # We set units=2 to learn both the mean and the variance of the Normal distribution.
 
     outputs = []
-    for feature_name in TARGET_NAMES:
+    for target_name in TARGET_NAMES:
         distribution_params = layers.Dense(units=2)(features)
         outputs.append(tfp.layers.IndependentNormal(1,
-            name=feature_name, dtype=tf.float64
+            name=target_name, dtype=tf.float64
         )(distribution_params))
     
+    return outputs
+def create_model_outputs_det(TARGET_NAMES,features):
+    outputs = []
+    for target_name in TARGET_NAMES:
+        outputs.append(layers.Dense(units=1, name = target_name)(features))
     return outputs
 
 def create_probablistic_bnn_model(FEATURE_NAMES, TARGET_NAMES, train_size, n_outputs, hidden_units, name = 'PBNN'):
@@ -76,7 +81,7 @@ def create_probablistic_bnn_model(FEATURE_NAMES, TARGET_NAMES, train_size, n_out
             kl_weight= 1 / train_size,
         )(features)
 
-    outputs = create_model_outputs(TARGET_NAMES,features)
+    outputs = create_model_outputs_det(TARGET_NAMES,features)
 
     model = keras.Model(inputs=inputs, outputs=outputs, name = name)
     return model
@@ -86,20 +91,20 @@ def negative_loglikelihood(targets, estimated_distribution):
     return -estimated_distribution.log_prob(targets)
 
 
-def run_experiment(model, loss, learning_rate, num_epochs, train_dataset, test_dataset):
+def run_experiment(model, loss, learning_rate, num_epochs, train_dataset, test_dataset, verbose = 1):
 
     logdir="surrogate_models/.logs/"+ model.name +'_'+ datetime.now().strftime("%Y%m%d-%H%M%S")
     tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
 
 
     model.compile(
-        optimizer=keras.optimizers.RMSprop(learning_rate=learning_rate),
+        optimizer=keras.optimizers.Adam(learning_rate=learning_rate),
         loss=loss,
         metrics=[keras.metrics.MeanSquaredError()]
     )
 
     print("Start training the model...")
-    model.fit(train_dataset, epochs=num_epochs, validation_data=test_dataset, callbacks=[tensorboard_callback], verbose = 0)
+    model.fit(train_dataset, epochs=num_epochs, validation_data=test_dataset, callbacks=[tensorboard_callback], verbose = verbose)
     print("Model training finished.")
     rmse = model.evaluate(train_dataset, verbose=0)
     print(f"Train MSE: {round(np.sum(rmse), 3)}")

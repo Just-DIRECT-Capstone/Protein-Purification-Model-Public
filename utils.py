@@ -12,7 +12,7 @@ def get_train_and_test_splits(x,y, train_size, batch_size=1):
     # We prefetch with a buffer the same size as the dataset because th dataset
     # is very small and fits into memory.
     dataset = (
-        tf.data.Dataset.from_tensor_slices((x.to_dict('list'), y.values))
+        tf.data.Dataset.from_tensor_slices((x.to_dict('list'), y.to_dict('list')))
     )
     # We shuffle with a buffer the same size as the dataset.
     train_dataset = (

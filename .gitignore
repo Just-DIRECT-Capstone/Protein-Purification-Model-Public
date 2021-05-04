@@ -1,8 +1,8 @@
 .vscode
 *.ipynb_checkpoints/
 *__pycache__/
-*.logs
-*.hypertuning
+*.logs*
+*.hypertuning*
 
 # Josh's code here
 just-private/
