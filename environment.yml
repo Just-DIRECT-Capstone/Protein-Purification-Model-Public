@@ -8,3 +8,5 @@ dependencies:
   - numpy=1.17.3
   - python=3.7.5
   - pandas=1.2.3
+  - scikit-learn==0.24.1
+  - keras-tuner==1.0.2
