@@ -1,0 +1,2 @@
+keras-tuner==1.0.2
+tensorboard==2.5.0rc1
