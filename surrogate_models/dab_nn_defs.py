@@ -69,7 +69,6 @@ def create_model_outputs_det(TARGET_NAMES,features):
 def create_probablistic_bnn_model(FEATURE_NAMES, TARGET_NAMES, train_size, n_outputs, hidden_units, name = 'PBNN'):
     inputs = create_model_inputs(FEATURE_NAMES)
     features = layers.concatenate(list(inputs.values()))
-    features = layers.BatchNormalization()(features)  # mean 0, std 1
 
     # Create hidden layers with weight uncertainty using the DenseVariational layer.
     for units in hidden_units:
