@@ -6,8 +6,8 @@ import numpy as np
 
 class MyUtilsTests(unittest.TestCase):
     def test_load_data(self):
-        filename = 'mol_res_scan_results_7.csv'
-        data = utils.load_data(filename)
+        filename = 'test_data.csv'
+        data = utils.load_data(filename, filepath=['tests',])
         self.assertEqual(isinstance(data,pd.DataFrame), True)
 
         filename = 'dummy.csv'
