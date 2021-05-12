@@ -7,7 +7,10 @@ import numpy as np
 class MyUtilsTests(unittest.TestCase):
     def test_load_data(self):
         filename = 'test_data.csv'
-        data = utils.load_data(filename, filepath=['tests',])
+        currentdir = os.getcwd()
+        parentdir = os.path.dirname(currentdir)
+
+        data = utils.load_data(parentdir,filename, filepath=['tests',])
         self.assertEqual(isinstance(data,pd.DataFrame), True)
 
         filename = 'dummy.csv'
