@@ -14,7 +14,7 @@ class MyUtilsTests(unittest.TestCase):
 
         filename = 'dummy.csv'
         try:
-            data = utils.load_data(filename)
+            data = utils.load_data(dir, filename)
         except Exception as e:
             self.assertEqual(isinstance(e,FileNotFoundError), True)
     
