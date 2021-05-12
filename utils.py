@@ -6,11 +6,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-def load_data(filename, filepath = ['just-private','data']):
+def load_data(parentdir, filename, filepath = ['just-private','data']):
     """Load data from a .csv file into a dataframe. 
 
     Parameters
     ----------
+    parentdir : str
+        Root projec directory
     filename : str
 
     filepath : list, default = ['just-private','data']
@@ -21,8 +23,7 @@ def load_data(filename, filepath = ['just-private','data']):
     data : pd.DataFrame
 
     """
-    path = os.getcwd()
-    p2f = os.path.join(path,*filepath,filename)
+    p2f = os.path.join(parentdir,*filepath,filename)
     try:
         return pd.read_csv(p2f, index_col = 0)
     except Exception as e:
@@ -134,7 +135,16 @@ def preprocessing(arrays, standarize = True, bounds = dict(), skip = None):
     return preprocessed
 
 
-
+def count_parameters(model):
+    total_parameters = 0 
+    #iterating over all variables 
+    for variable in model.trainable_variables:   
+        local_parameters=1 
+        shape = variable.get_shape()  #getting shape of a variable 
+        for i in shape: 
+            local_parameters*=i  #mutiplying dimension values 
+        total_parameters+=local_parameters 
+    return total_parameters
 
 ### old
 
