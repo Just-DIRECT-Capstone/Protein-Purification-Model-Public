@@ -91,7 +91,7 @@ def chroma_train_test_split(data : pd.DataFrame, x : list, y : list, keep_cuts =
     return train[x], test[x], train[y], test[y]
 
 
-def preprocessing(arrays, standarize = True, bounds = dict(), skip = None):
+def preprocessing(arrays, standarize = False, bounds = dict(), skip = None):
     """Preprocess the data before doing any modeling. 
 
     Parameters
@@ -117,7 +117,7 @@ def preprocessing(arrays, standarize = True, bounds = dict(), skip = None):
     if n_arrays == 0:
         raise ValueError("At least one array required as input")
     
-    scaler = StandardScaler().fit(arrays[0])
+    if standarize: scaler = StandardScaler().fit(arrays[0])
     preprocessed = []
     for i in arrays:
 
@@ -126,12 +126,15 @@ def preprocessing(arrays, standarize = True, bounds = dict(), skip = None):
             for k, b in bounds.items():
                 i = i.loc[(i[k] >= b[0]) & (i[k] <= b[1])]
         # Scaling
-        preprocessed.append(pd.DataFrame(scaler.transform(i), index=i.index, columns=i.columns))
+        if standarize: preprocessed.append(pd.DataFrame(scaler.transform(i), index=i.index, columns=i.columns))
+        else: preprocessed.append(i)
 
         if skip:
             for k in skip:
                 preprocessed[-1][k] = i[k]
-            
+
+    if standarize: preprocessed.append(scaler)
+
     return preprocessed
 
 
@@ -146,20 +149,5 @@ def count_parameters(model):
         total_parameters+=local_parameters 
     return total_parameters
 
-### old
-
-# from keras. could use sklearn too 
-def get_train_and_test_splits(x,y, train_size, batch_size=1):
-    # We prefetch with a buffer the same size as the dataset because th dataset
-    # is very small and fits into memory.
-    dataset = (
-        tf.data.Dataset.from_tensor_slices((x.to_dict('list'), y.to_dict('list')))
-    )
-    # We shuffle with a buffer the same size as the dataset.
-    train_dataset = (
-        dataset.take(train_size).shuffle(buffer_size=train_size).batch(batch_size)
-    )
-    test_dataset = dataset.skip(train_size).batch(batch_size)
-
-    return train_dataset, test_dataset
-
+def get_model_name(model,dataset):
+    return model.name[:-(1+len(dataset[:-4]))]
