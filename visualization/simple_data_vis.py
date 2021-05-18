@@ -71,7 +71,7 @@ def scatter_hats(models, train, test, settings, N = 50):
     plt.tight_layout()
     plt.text(2, .80, '.', fontsize=1)
     # could be a loop
-    plt.text(1.20, .90, 'Dataset: '+settings['dataset'][:-4], fontsize=12)
+    plt.text(1.20, .90, 'Dataset: '+settings['dataset'], fontsize=12)
     plt.text(1.20, .70, 'Optimizer: '+settings['optimizer'], fontsize=12)
     plt.text(1.20, .50, 'Learning Rate: '+str(settings['learning_rate']), fontsize=12)
     plt.text(1.20, .30, 'Loss Weights: '+str(settings['loss_weights']), fontsize=12)
