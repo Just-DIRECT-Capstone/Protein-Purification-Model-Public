@@ -56,8 +56,10 @@ class MyUtilsTests(unittest.TestCase):
         dir = os.getcwd()
         data1 = utils.load_data(dir,filename, filepath=['tests',])
         CV = 5
+        x = [*data1.columns[:2],*data1.columns[4:]]
+        y = data1.columns[2:4]
         data2split, validation = utils.chroma_train_test_split(data1, test_size=0.20)
-        trains, tests = utils.data_pipeline([data2split,], x, y, cross_val = CV)
+        trains, tests = utils.data_pipeline([data2split,], x_data=x, y_data=y, cross_val = CV)
         assert isinstance(trains,list) == True, "not printing list"
         assert len(trains[0]) == CV, "not splitting into CV folds"
     
