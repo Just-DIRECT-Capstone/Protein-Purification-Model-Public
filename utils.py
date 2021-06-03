@@ -181,7 +181,7 @@ def data_pipeline(array, x_data, y_data, cross_val = 1):
         for _ in range(cross_val):
             a_number = preprocessing([a_number,], bounds = {'yield':[0,1],'purity':[0,1]})[0]
             train_x, test_x, train_y, test_y = chroma_train_test_split(a_number, x_data, y_data)
-            train_x, test_x = preprocessing(
+            train_x, test_x, scaler_x = preprocessing(
                                         [train_x, test_x],
                                         standarize = True,
                                         skip = ['cut 1','cut 2']
