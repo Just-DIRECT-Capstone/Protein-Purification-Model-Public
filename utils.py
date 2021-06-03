@@ -31,7 +31,7 @@ def load_data(parentdir, filename, filepath = ['just-private','data']):
 
 
 # custom train test split to ensure cuts from the same run are all in the same size
-def chroma_train_test_split(data : pd.DataFrame, x : list, y : list, keep_cuts = True, test_size=0.20, random_seed=None):
+def chroma_train_test_split(data : pd.DataFrame, x = None, y = None, keep_cuts = True, test_size=0.20, random_seed=None):
     """Split dataframe into train and test sets. If keep_cuts is True, then all data from the same run
     is maintained in either train or test. Otherwise, different cuts from the same run can be split.
 
@@ -62,6 +62,10 @@ def chroma_train_test_split(data : pd.DataFrame, x : list, y : list, keep_cuts =
     train_y : pd.DataFrame
     test_y : pd.DataFrame
 
+    or
+
+    train: pd.DataFrame
+    test : pd.DataFrame
     """
     if random_seed: np.random.seed(random_seed)
 
@@ -85,10 +89,12 @@ def chroma_train_test_split(data : pd.DataFrame, x : list, y : list, keep_cuts =
     else:
         train, test = train_test_split(data, test_size=test_size, random_state=random_seed)
 
-    if not np.all([var in data.columns for var in [*x,*y]]):
-        raise Exception("x or y labels not in the dataframe")
-
-    return train[x], test[x], train[y], test[y]
+    if (x is not None) and (y is not None):
+        if not np.all([var in data.columns for var in [*x,*y]]):
+            raise Exception("x or y labels not in the dataframe")
+        return train[x], test[x], train[y], test[y]
+    else:
+        return train, test
 
 
 def preprocessing(arrays, standarize = False, bounds = dict(), skip = None):
@@ -137,8 +143,61 @@ def preprocessing(arrays, standarize = False, bounds = dict(), skip = None):
 
     return preprocessed
 
+def data_pipeline(array, x, y, cv = 1):
+    """Pipeline to split data array and preprocess them. 
+
+    Parameters
+    ----------
+    *arrays : list
+        List with pd.DataFrames.
+    
+    x : list
+        List of dependent variable names in the dataframe
+    
+    y : list
+        List of independent variable names in the dataframe
+    
+    cv : int, default = 1
+        Number of splits for cross-validation
+
+    Returns
+    -------
+    trains: Nested list with pd.DataFrames for training: arrays, CV, x-y
+    tests: Nested list with pd.DataFrames for testing: arrays, CV, x-y
+
+    """
+
+    splits = []
+    for a in array:
+        train_cv = []
+        test_cv =[]
+        for _ in range(cv):
+            a = preprocessing([a,], bounds = {'yield':[0,1],'purity':[0,1]})[0]
+            train_x, test_x, train_y, test_y = chroma_train_test_split(a, x, y)
+            train_x, test_x, scaler_x = preprocessing(
+                                        [train_x, test_x], 
+                                        standarize = True, 
+                                        skip = ['cut 1','cut 2']
+                                        )
+            train_cv.append([train_x, train_y])
+            test_cv.append([test_x, test_y])
+        splits.append(train_cv)
+        splits.append(test_cv)
+
+    return splits[::2], splits[1::2]  # all the datasets for training, and testing
 
 def count_parameters(model):
+    """Count TensorFlow model parameters. 
+
+    Parameters
+    ----------
+    model: TensorFlow model
+    
+    Returns
+    -------
+    total_parameters
+
+    """
     total_parameters = 0 
     #iterating over all variables 
     for variable in model.trainable_variables:   
@@ -150,4 +209,15 @@ def count_parameters(model):
     return total_parameters
 
 def get_model_name(model,dataset):
+    """Get TensorFlow model name. 
+
+    Parameters
+    ----------
+    model: TensorFlow model
+    
+    Returns
+    -------
+    model name
+
+    """
     return model.name[:-(1+len(dataset[:-4]))]
