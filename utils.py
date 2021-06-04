@@ -152,7 +152,7 @@ def preprocessing(arrays, standarize = False, bounds = dict(), skip = None):
 
     return preprocessed
 
-def data_pipeline(array, x_data, y_data, cross_val = 1):
+def data_pipeline(array, x_data = None, y_data = None, cross_val = 1):
     """Pipeline to split data array and preprocess them.
 
     Parameters
@@ -175,6 +175,9 @@ def data_pipeline(array, x_data, y_data, cross_val = 1):
     tests: Nested list with pd.DataFrames for testing: arrays, CV, x-y
 
     """
+    # just to streamline dash implementation
+    if x_data is None: x_data = [*array[0].columns[:2],*array[0].columns[4:]]
+    if y_data is None: y_data = array[0].columns[2:4]
 
     splits = []
     for a_number in array:

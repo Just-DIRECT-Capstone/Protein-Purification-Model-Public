@@ -36,7 +36,7 @@ def scatter_hats(models, train, test, settings, n_points = 50):
     sample_inputs_test = test[0].sample(n_points)
     sample_outputs_test = test[1].loc[sample_inputs_test.index]
 
-    plt.figure(figsize = (10*len(models)/3,10*len(models)))
+    f = plt.figure(figsize = (10*len(models)/3,10*len(models)))
     for i,mod in enumerate(models):
         model_name = utils.get_model_name(mod, settings['dataset'])
         plt.subplot(1,len(models),i+1)
@@ -87,7 +87,8 @@ def scatter_hats(models, train, test, settings, n_points = 50):
     plt.text(1.20, .50, 'Learning Rate: '+str(settings['learning_rate']), fontsize=12)
     plt.text(1.20, .30, 'Loss Weights: '+str(settings['loss_weights']), fontsize=12)
     plt.text(1.20, .10, 'Epochs: '+str(settings['epochs']), fontsize=12)
-
+    return f
+    
 def training_curves(models, y_data, settings, histories, smoothing = 1):
     """function for building training curves"""
     epochs = np.arange(settings['epochs'])
