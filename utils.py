@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+import pickle
+import tensorflow as tf
 
 def load_data(parentdir, filename, filepath = ['just-private','data']):
     """Load data from a .csv file into a dataframe.
@@ -192,6 +194,44 @@ def data_pipeline(array, x_data, y_data, cross_val = 1):
         splits.append(test_cv)
 
     return splits[::2], splits[1::2]  # all the datasets for training, and testing
+
+def save_model(parentdir, model, settings = None):
+    """Save full TensorFlow model and settings
+    
+    Parameters
+    ----------
+    parentdir: root directory
+    model: TensorFlow model
+    settings: dictionary with training settings
+
+    Returns
+    -------
+    save_path
+    """
+    save_path = os.path.join(parentdir,'surrogate_models','saved_models',model.name)
+    model.save(save_path)
+    if settings:
+        with open(os.path.join(save_path,'settings.pickle'), 'wb') as file: pickle.dump(settings, file)
+    return save_path
+
+def load_model(model_dir):
+    """Load full TensorFlow model and settings
+    
+    Parameters
+    ----------
+    model_dir: directory of saved model
+  
+    Returns
+    -------
+    model
+    settings
+
+    """
+    model = tf.keras.models.load_model(model_dir)
+    try:
+        with open(os.path.join(model_dir,'settings.pickle'), 'rb') as file: settings = pickle.load(file)
+    except: settings = None
+    return model, settings
 
 def count_parameters(model):
     """Count TensorFlow model parameters.
