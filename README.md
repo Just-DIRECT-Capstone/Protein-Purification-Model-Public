@@ -6,15 +6,15 @@
 
 ## Project Background
 
-This project was sponsored by Just--Evotec Biologics [insert link here], a company focused on designing technologies that will accelerate the development of biotherapeutics while reducing the manufacturing cost. Just's strengths are in molecular design, process and product design, and manufacturing plant design. 
+This project was sponsored by [Just--Evotec Biologics](https://www.justbiotherapeutics.com/), a company focused on designing technologies to accelerate the development of biotherapeutics while reducing the manufacturing cost. Just's strengths are in molecular design, process and product design, and manufacturing plant design. 
 
 This project exists at the interface of molecular and process design; the best way to build an affordable manufacturing process is to start with molecules and known operating conditions that produce high protein yields and high purity. 
 
 ### So, how do we find the combination of molecular interaction parameters and operating conditions that give the highest yield and purity? 
 
-Companies have used mechanistic models (built on scientific principles and run through computer simualtions) in the past to iterate through a list of molecular interaction parameters and operating conditions to receive predicted yield and purity. However, this process requires a lot of time and computing power. What if machine learning could take this generated data and accurately predict yield and purity based on the same input parameters in a fraction of the time?
+Companies have used mechanistic models (built on scientific principles and run through computer simulations) in the past to iterate through a list of molecular interaction parameters/operating conditions to predict yield and purity. However, this process requires a lot of time and computing power. What if machine learning could take this already generated data and accurately predict yield and purity based on the same input parameters in a fraction of the time?
 
-Surrodash by JCP seeks to use the provided mechanistic model to produce datasets that can instead train models to predict yield and purity using less time and computational power. The trained predictive models can then be used to pinpoint the molecular interaction parameters and operating conditions that produce the highest yield and purity, allowing Just to focus on the best possible candidates when it comes to molecular and process design.
+Surrodash by JCP seeks to use the provided mechanistic model to produce datasets that can instead train models to predict yield and purity using less time and computational power. The trained predictive models can then be used to pinpoint the molecular interaction parameters and operating conditions that produce the highest yield and purity, allowing Just to focus on the best initial candidates when it comes to molecular and process design.
 
 ## Project Use Cases and Components
 
@@ -60,14 +60,15 @@ This dash app provides visualization of data produced by the MM to show general 
 
 ### Project Analysis
 
+#### Best Practices for the Mechanistic Model
+
+#### Model Characterization
 Details about the analysis we've performed. Where does the model struggle the most?
-What are the best practices for using the mechanistic model to produce data?
 
 ### Future Goals and Next Steps
 
-1.
-2.
-3.
+1. Improvements to the mechanistic model?
+2. Improvements to the surrogate models?
+3. Improvements to the dash platform?
 
-### Gantt Chart for workflow over the quarter -- I think we should move this to a documentation folder?
-![alt text](https://live.staticflickr.com/65535/51201234418_d024c83036_o.jpg)
+-would've been cool to map protein sequence/structure to yield and purity
