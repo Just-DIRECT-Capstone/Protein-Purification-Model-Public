@@ -46,8 +46,6 @@ class MyUtilsTests(unittest.TestCase):
         data_try = utils.preprocessing([data1,], bounds = {'yield':[0,1],'purity':[0,1]})[0]
         if data1.shape[0] > data_try.shape[0]:
             result = 1
-        if data1.shape[0] < data_try.shape[0]:
-            result = 0
         assert result == 1, "problem removing out of bounds data"
         
     def test_data_pipeline(self):
