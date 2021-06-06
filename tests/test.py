@@ -81,11 +81,8 @@ class MyUtilsTests(unittest.TestCase):
 
     def test_load_model(self):
         """tests function that loads pretrained models"""
-        try:
-            dummy_model, dummy_settings = utils.load_model(os.path.join(os.getcwd(),
-                'surrogate_models','saved_models','DNN_mol_res_scan_results_7'))
-        except Exception as exception:
-            self.assertTrue(isinstance(exception,FileNotFoundError))
+        dummy_model, dummy_settings = utils.load_model(os.path.join(os.getcwd(),
+            'surrogate_models','saved_models','DNN_mol_res_scan_results_7'))
 
         assert isinstance(dummy_settings, dict), "not returning a settings dictionary"
         assert isinstance(dummy_model, tf.keras.Model), "not returning a tensorflow model"
@@ -140,7 +137,7 @@ class MyNNTests(unittest.TestCase):
         assert isinstance(dummy, tf.keras.Model), "not returning a tensorflow model"
         assert isinstance(dummy.layers[-1],tf.keras.layers.Dense), "incorrect output layer"
 
-    def create_probabilistic_nn(self):
+    def test_create_probabilistic_nn(self):
         """tests function that defines NNs"""
         dummy = engine.create_deterministic_nn(
             feature_names = ['a','b'],
