@@ -139,7 +139,7 @@ class MyNNTests(unittest.TestCase):
 
     def test_create_probabilistic_nn(self):
         """tests function that defines NNs"""
-        dummy = engine.create_deterministic_nn(
+        dummy = engine.create_probabilistic_nn(
             feature_names = ['a','b'],
             target_names = ['c'],
             hidden_units = [16,8,4],
