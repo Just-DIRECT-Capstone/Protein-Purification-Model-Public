@@ -83,27 +83,6 @@ def create_probabilistic_nn(feature_names, target_names, hidden_units, name = 'P
     return create_deterministic_nn(feature_names, target_names, hidden_units,
             name = name, out = 'P')
 
-def create_probabilistic_nn_old(feature_names, target_names, train_size,
-        hidden_units, name = 'PNN'):
-    """old nn??"""
-    inputs = create_model_inputs(feature_names)
-    features = inputs #layers.concatenate(list(inputs.values()))
-
-    # Create hidden layers with weight uncertainty using the DenseVariational layer.
-    for units in hidden_units:
-        features = tfp.layers.DenseVariational(
-            units=units,
-            activation="sigmoid",
-            make_prior_fn=prior,
-            make_posterior_fn=posterior,
-            kl_weight= 1 / train_size,
-        )(features)
-
-    outputs = create_model_outputs_det(target_names,features)
-
-    model = keras.Model(inputs=inputs, outputs=outputs, name = name)
-    return model
-
 def create_deterministic_linear_regressor(feature_names, target_names, name = 'DLR'):
     """function to create deterministic linear regression model"""
     return create_deterministic_nn(feature_names, target_names, hidden_units = [1,],
@@ -113,6 +92,27 @@ def create_probabilistic_linear_regressor(feature_names, target_names, name = 'P
     """function to create probabilistic linear regression model"""
     return create_deterministic_nn(feature_names, target_names, hidden_units = [1,],
             name = name, out = 'P')
+
+# def create_probabilistic_nn_old(feature_names, target_names, train_size,
+#         hidden_units, name = 'PNN'):
+#     """old nn??"""
+#     inputs = create_model_inputs(feature_names)
+#     features = inputs #layers.concatenate(list(inputs.values()))
+
+#     # Create hidden layers with weight uncertainty using the DenseVariational layer.
+#     for units in hidden_units:
+#         features = tfp.layers.DenseVariational(
+#             units=units,
+#             activation="sigmoid",
+#             make_prior_fn=prior,
+#             make_posterior_fn=posterior,
+#             kl_weight= 1 / train_size,
+#         )(features)
+
+#     outputs = create_model_outputs_det(target_names,features)
+
+#     model = keras.Model(inputs=inputs, outputs=outputs, name = name)
+#     return model
 
 def negative_loglikelihood(targets, estimated_distribution):
     """function that returns negative_loglikelihood"""

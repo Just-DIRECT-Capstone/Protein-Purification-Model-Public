@@ -249,14 +249,14 @@ def count_parameters(model):
 
     """
     total_parameters = 0
-    #iterating over all variables
+    # iterating over all variables
     for variable in model.trainable_variables:
         local_parameters=1
-        shape = variable.get_shape() #getting shape of a variable
+        shape = variable.get_shape() # getting shape of a variable
         for i in shape:
-            local_parameters*=i  #mutiplying dimension values
+            local_parameters*=i  # mutiplying dimension values
         total_parameters+=local_parameters
-    return total_parameters
+    return int(total_parameters)
 
 def get_model_name(model,dataset):
     """Get TensorFlow model name.

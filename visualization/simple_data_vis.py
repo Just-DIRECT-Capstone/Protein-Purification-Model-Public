@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import utils
-from surrogate_models.dab_nn_defs import multi_mse
+from surrogate_models.nn_defs import multi_mse
 
 def histograms(data,x_data,y_data):
     """builds histograms"""
@@ -26,15 +26,15 @@ def histograms(data,x_data,y_data):
 
     return fig,axis
 
-def scatter_hats(models, train, test, settings, n_points = 50):
+def scatter_hats(models, train, test = None, settings = {}, n_points = 50, display_info = True):
     """main function for visualizing model prediction v. true value complete with mse"""
     y_data = train[1].columns
     markers = ['.','^'] # ok for two outputs only
 
     sample_inputs_train = train[0].sample(n_points)
     sample_outputs_train = train[1].loc[sample_inputs_train.index]
-    sample_inputs_test = test[0].sample(n_points)
-    sample_outputs_test = test[1].loc[sample_inputs_test.index]
+    if test is not None: sample_inputs_test = test[0].sample(n_points)
+    if test is not None: sample_outputs_test = test[1].loc[sample_inputs_test.index]
 
     f = plt.figure(figsize = (10*len(models)/3,10*len(models)))
     for i,mod in enumerate(models):
@@ -42,7 +42,7 @@ def scatter_hats(models, train, test, settings, n_points = 50):
         plt.subplot(1,len(models),i+1)
 
         train_hat = mod(sample_inputs_train.to_numpy())
-        test_hat = mod(sample_inputs_test.to_numpy())
+        if test is not None: test_hat = mod(sample_inputs_test.to_numpy())
 
         for j in range(len(y_data)):
             try:
@@ -50,7 +50,7 @@ def scatter_hats(models, train, test, settings, n_points = 50):
                         train_hat[j].numpy(),
                             marker = markers[j], color = 'k', alpha = 0.5,
                             ls = 'none',  label = y_data[j])
-                plt.errorbar(sample_outputs_test.to_numpy()[:,j],
+                if test is not None: plt.errorbar(sample_outputs_test.to_numpy()[:,j],
                         test_hat[j].numpy(),
                             marker = markers[j], color = 'r', alpha = 0.5,
                             ls = 'none')
@@ -59,7 +59,7 @@ def scatter_hats(models, train, test, settings, n_points = 50):
                         yerr = train_hat[j].stddev().numpy().squeeze(),
                             marker = markers[j], color = 'k', alpha = 0.5, ls = 'none',
                             label = y_data[j])
-                plt.errorbar(sample_outputs_test.to_numpy()[:,j], test_hat[j].mean().numpy(),
+                if test is not None: plt.errorbar(sample_outputs_test.to_numpy()[:,j], test_hat[j].mean().numpy(),
                         yerr = test_hat[j].stddev().numpy().squeeze(),
                             marker = markers[j], color = 'r', alpha = 0.5, ls = 'none')
 
@@ -76,17 +76,19 @@ def scatter_hats(models, train, test, settings, n_points = 50):
 
         rmse = multi_mse(train[1], mod(train[0].to_numpy()))
         plt.text(0.5,0.12,f"Train MSE: {round(np.sum(rmse)*100, 2)}", color = 'k')
-        rmse = multi_mse(test[1], mod(test[0].to_numpy()))
-        plt.text(0.5,0.04,f"Test MSE: {round(np.sum(rmse)*100, 2)}", color = 'r')
+        if test is not None:
+            rmse = multi_mse(test[1], mod(test[0].to_numpy()))
+            plt.text(0.5,0.04,f"Test MSE: {round(np.sum(rmse)*100, 2)}", color = 'r')
 
     plt.tight_layout()
-    plt.text(2, .80, '.', fontsize=1)
-    # could be a loop
-    plt.text(1.20, .90, 'Dataset: '+settings['dataset'], fontsize=12)
-    plt.text(1.20, .70, 'Optimizer: '+settings['optimizer'], fontsize=12)
-    plt.text(1.20, .50, 'Learning Rate: '+str(settings['learning_rate']), fontsize=12)
-    plt.text(1.20, .30, 'Loss Weights: '+str(settings['loss_weights']), fontsize=12)
-    plt.text(1.20, .10, 'Epochs: '+str(settings['epochs']), fontsize=12)
+    if display_info:
+        plt.text(2, .80, '.', fontsize=1)
+        # could be a loop
+        plt.text(1.20, .90, 'Dataset: '+settings['dataset'], fontsize=12)
+        plt.text(1.20, .70, 'Optimizer: '+settings['optimizer'], fontsize=12)
+        plt.text(1.20, .50, 'Learning Rate: '+str(settings['learning_rate']), fontsize=12)
+        plt.text(1.20, .30, 'Loss Weights: '+str(settings['loss_weights']), fontsize=12)
+        plt.text(1.20, .10, 'Epochs: '+str(settings['epochs']), fontsize=12)
     return f
     
 def training_curves(models, y_data, settings, histories, smoothing = 1):

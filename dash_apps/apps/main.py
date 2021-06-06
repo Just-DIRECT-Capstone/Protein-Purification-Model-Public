@@ -161,7 +161,7 @@ def update_model(*args):
     MODEL, settings = utils.load_model(os.path.join(path,'surrogate_models','saved_models',model_names[new_pick]))
 
     if pDATA is not None:
-        f = pltwrap(vis.scatter_hats([MODEL],pDATA[0][0][0],pDATA[1][0][0], settings))
+        f = pltwrap(vis.scatter_hats([MODEL],pDATA[0][0][0], settings, display_info=False))
     else:
         f = {}
     return dropdown_models(new_pick), model_names[new_pick],[],f
