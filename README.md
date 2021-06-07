@@ -54,21 +54,43 @@ This dash app provides visualization of data produced by the MM to show general 
 
 `source setup.sh`
 
-3. Launch the app.
+3. Launch the dash app.
 
 `source launch.sh`
 
-### Project Analysis
+After running the setup.sh file, you can also use our example notebooks in our `surrogate_modeling/notebooks` folder. The example notebooks here include notes on how to run K-fold cross validation on the models, how to train and visualize your model accuracy, and how to save your models.
 
-#### Best Practices for the Mechanistic Model
+## Project Analysis
 
-#### Model Characterization
-Details about the analysis we've performed. Where does the model struggle the most?
+### Best Practices for the Mechanistic Model
+Talk about how to use the mechanistic model
 
-### Future Goals and Next Steps
+### Model Characterization
+We compared our models' performance on data of different size and data generated with different isotherm types and different resin types. Our comparison notebooks can be found in the `surrogate_models/notebooks/development_notebooks` folder, but indicate that our model is fairly accurate at training/testing on data of different isotherm type. The model accuracy is greatly decreased as dataset size decreases and the model cannot predict on data if it's been trained with a different resin type. This is due to the column parameters related to each resin type in the mechanistic model. To accurately test for a certain resin type, you have to train the model on that same resin type.
 
-1. Improvements to the mechanistic model?
-2. Improvements to the surrogate models?
-3. Improvements to the dash platform?
+## Future Goals and Next Steps
 
--would've been cool to map protein sequence/structure/features to yield and purity
+We have a number of future steps we'd like to take to improve both the mechanistic model provided to us and our own surrogate modeling/dash visualization python package.
+
+### Mechanistic Model
+#### Improvements to the MM
+One of our main challenges with this project was generating datasets for the model to train/test on that contained realistic input parameters. While we modified areas of the model based on our literature search to include the widest range of valuable information, we need to both improve the Langmuir isotherm model and validate further variable approximations to have the maximum confidence in our datasets.
+
+The MM code could also be improved in its usability; for the purposes of this project, every time we needed to change an input parameter we would manually change that in the code. This often led to scouring the code for every instance of a single variable. In the future, we'd like to clarify the usage of each variable in the code so that only one instance of a single variable will change that variable throughout the code.
+
+We would also like to make the MM code more manageable by providing an easier user interface for changing variables and generating new data; the largest improvement to the MM could be in automating the process of generating data by developing a command line interface that prompts the user to choose their parameters and then generates the dataset with their ideal parameters in a simple way.
+
+#### Dataset Production
+For this project, we probed model performance by comparing the accuracy of models trained and tested across different isotherms, resin types, and dataset sizes. We would be interested in the future to see how the model performs when two or more of these inputs are changed; how does the model do when trained on different resin types and isotherms? How does dataset size affect the accuracy of the model with such a wide range of input parameters?
+
+We would also like to modify the MM code to generate datasets with multiple impurities; the data analyzed here has only included one impurity but this isn't likely the case in most real world scenarios. It would be interesting to see how model performance is affected by multiple impurities (and thus multiple input parameters).
+
+### Surrogate Model and Dash Platform
+
+In the future, we'd also be interested in comparing our current model performance to a developed Gaussian Process Regression (GPR) model due to its ability to function well on small datasets and provide uncertainty measurements.
+
+Further visualizations in the Dash platform could also help our users; if you're interested in seeing a new visualization added, open an issue and let us know!
+
+### Other 
+
+The predictive process could be sped up even more by removing the need for the mechanistic model entirely. A NN that maps protein sequence/structure to yield and purity would greatly speed the molecular design process, although challenges with this idea would likely be finding enough sequence + structure to yield + purity data to train a robust NN. We hope to investigate this idea in the future.
