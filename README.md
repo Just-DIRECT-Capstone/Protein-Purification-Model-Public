@@ -71,4 +71,4 @@ Details about the analysis we've performed. Where does the model struggle the mo
 2. Improvements to the surrogate models?
 3. Improvements to the dash platform?
 
--would've been cool to map protein sequence/structure to yield and purity
+-would've been cool to map protein sequence/structure/features to yield and purity
