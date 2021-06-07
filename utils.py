@@ -1,10 +1,10 @@
 """imports"""
 import os
+import pickle
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-import pickle
 import tensorflow as tf
 
 def load_data(parentdir, filename, filepath = ['just-private','data']):
@@ -176,8 +176,10 @@ def data_pipeline(array, x_data = None, y_data = None, cross_val = 1):
 
     """
     # just to streamline dash implementation
-    if x_data is None: x_data = [*array[0].columns[:2],*array[0].columns[4:]]
-    if y_data is None: y_data = array[0].columns[2:4]
+    if x_data is None:
+        x_data = [*array[0].columns[:2],*array[0].columns[4:]]
+    if y_data is None:
+        y_data = array[0].columns[2:4]
 
     splits = []
     for a_number in array:
@@ -200,7 +202,7 @@ def data_pipeline(array, x_data = None, y_data = None, cross_val = 1):
 
 def save_model(parentdir, model, settings = None):
     """Save full TensorFlow model and settings
-    
+
     Parameters
     ----------
     parentdir: root directory
@@ -219,16 +221,15 @@ def save_model(parentdir, model, settings = None):
 
 def load_model(model_dir):
     """Load full TensorFlow model and settings
-    
+
     Parameters
     ----------
     model_dir: directory of saved model
-  
+
     Returns
     -------
     model
     settings
-
     """
     model = tf.keras.models.load_model(model_dir)
     try:

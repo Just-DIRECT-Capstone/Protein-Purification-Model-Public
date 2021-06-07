@@ -1,10 +1,9 @@
-from dash_apps.apps.myapp import app
-
+"""imports"""
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-import dash_bootstrap_components as dbc
-
+import dash_bootstrap_compents as dbc
+from dash_apps.apps.myapp import app
 from dash_apps.apps import main
 import dash_apps.shared_callbacks
 from dash_apps.shared_components import navbar, sidebar, sidebar_btn
@@ -22,6 +21,7 @@ app.layout = html.Div([
 @app.callback(Output('page', 'children'),
               Input('url', 'pathname'))
 def display_page(pathname):
+    """displays dash page"""
     if pathname == '/':
         return main.layout
     else:
