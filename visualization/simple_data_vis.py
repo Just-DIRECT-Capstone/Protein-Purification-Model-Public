@@ -1,4 +1,5 @@
 """imports"""
+from inspect import isdatadescriptor
 import numpy as np
 import matplotlib.pyplot as plt
 import utils
@@ -26,7 +27,7 @@ def histograms(data,x_data,y_data):
 
     return fig,axis
 
-def scatter_hats(models, train, test = None, settings = {}, n_points = 50, display_info = True):
+def scatter_hats(models, train, test = None, settings = {}, n_points = 50, display_info = True, plot = 'yield,purity', index = False):
     """main function for visualizing model prediction v. true value complete with mse"""
     y_data = train[1].columns
     markers = ['.','^'] # ok for two outputs only
@@ -36,7 +37,11 @@ def scatter_hats(models, train, test = None, settings = {}, n_points = 50, displ
     if test is not None: sample_inputs_test = test[0].sample(n_points)
     if test is not None: sample_outputs_test = test[1].loc[sample_inputs_test.index]
 
-    f = plt.figure(figsize = (10*len(models)/3,10*len(models)))
+    if len(models) == 1:
+        f = plt.figure(figsize = (4*len(models),4*len(models)))
+    else:
+        f = plt.figure(figsize = (10*len(models)/3,10*len(models)))
+
     for i,mod in enumerate(models):
         model_name = utils.get_model_name(mod, settings['dataset'])
         plt.subplot(1,len(models),i+1)
@@ -45,25 +50,25 @@ def scatter_hats(models, train, test = None, settings = {}, n_points = 50, displ
         if test is not None: test_hat = mod(sample_inputs_test.to_numpy())
 
         for j in range(len(y_data)):
-            try:
-                plt.errorbar(sample_outputs_train.to_numpy()[:,j],
-                        train_hat[j].numpy(),
-                            marker = markers[j], color = 'k', alpha = 0.5,
-                            ls = 'none',  label = y_data[j])
-                if test is not None: plt.errorbar(sample_outputs_test.to_numpy()[:,j],
-                        test_hat[j].numpy(),
-                            marker = markers[j], color = 'r', alpha = 0.5,
-                            ls = 'none')
-            except:
-                plt.errorbar(sample_outputs_train.to_numpy()[:,j], train_hat[j].mean().numpy(),
-                        yerr = train_hat[j].stddev().numpy().squeeze(),
-                            marker = markers[j], color = 'k', alpha = 0.5, ls = 'none',
-                            label = y_data[j])
-                if test is not None: plt.errorbar(sample_outputs_test.to_numpy()[:,j], test_hat[j].mean().numpy(),
-                        yerr = test_hat[j].stddev().numpy().squeeze(),
-                            marker = markers[j], color = 'r', alpha = 0.5, ls = 'none')
+            if y_data[j] in plot:
+                try:
+                    plt.errorbar(sample_outputs_train.to_numpy()[:,j],
+                            train_hat[j].numpy(),
+                                marker = markers[j], color = 'k', alpha = 0.5,
+                                ls = 'none',  label = y_data[j])
+                    if test is not None: plt.errorbar(sample_outputs_test.to_numpy()[:,j],
+                            test_hat[j].numpy(),
+                                marker = markers[j], color = 'r', alpha = 0.5,
+                                ls = 'none')
+                except:
+                    plt.errorbar(sample_outputs_train.to_numpy()[:,j], train_hat[j].mean().numpy(),
+                            yerr = train_hat[j].stddev().numpy().squeeze(),
+                                marker = markers[j], color = 'k', alpha = 0.5, ls = 'none',
+                                label = y_data[j])
+                    if test is not None: plt.errorbar(sample_outputs_test.to_numpy()[:,j], test_hat[j].mean().numpy(),
+                            yerr = test_hat[j].stddev().numpy().squeeze(),
+                                marker = markers[j], color = 'r', alpha = 0.5, ls = 'none')
 
-        plt.title(model_name + ' ({} params)'.format(utils.count_parameters(mod)))
         xmax = 1.1
         plt.gca().set_aspect('equal')
         plt.xlim([0,xmax])
@@ -71,17 +76,18 @@ def scatter_hats(models, train, test = None, settings = {}, n_points = 50, displ
         plt.plot([0,xmax],[0,xmax],'k',alpha=0.25)
         plt.xlabel('true')
         plt.ylabel('predicted')
-        if i == 0:
-            plt.legend(frameon = False)
+        if i == 0 and plot == 'yield,purity':
+            plt.legend(frameon = True)
 
         rmse = multi_mse(train[1], mod(train[0].to_numpy()))
-        plt.text(0.5,0.12,f"Train MSE: {round(np.sum(rmse)*100, 2)}", color = 'k')
+        plt.text(0.5,0.12,f"MSE: {round(np.sum(rmse)*100, 2)}", color = 'k')
         if test is not None:
             rmse = multi_mse(test[1], mod(test[0].to_numpy()))
             plt.text(0.5,0.04,f"Test MSE: {round(np.sum(rmse)*100, 2)}", color = 'r')
 
     plt.tight_layout()
     if display_info:
+        plt.title(model_name + ' ({} params)'.format(utils.count_parameters(mod)))
         plt.text(2, .80, '.', fontsize=1)
         # could be a loop
         plt.text(1.20, .90, 'Dataset: '+settings['dataset'], fontsize=12)
@@ -89,7 +95,11 @@ def scatter_hats(models, train, test = None, settings = {}, n_points = 50, displ
         plt.text(1.20, .50, 'Learning Rate: '+str(settings['learning_rate']), fontsize=12)
         plt.text(1.20, .30, 'Loss Weights: '+str(settings['loss_weights']), fontsize=12)
         plt.text(1.20, .10, 'Epochs: '+str(settings['epochs']), fontsize=12)
-    return f
+    
+    if index:
+        return f, sample_inputs_train.index
+    else:
+        return f
     
 def training_curves(models, y_data, settings, histories, smoothing = 1):
     """function for building training curves"""

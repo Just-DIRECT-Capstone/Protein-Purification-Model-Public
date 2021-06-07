@@ -6,21 +6,8 @@ import copy
 
 # https://stackoverflow.com/questions/62732631/how-to-collapsed-sidebar-in-dash-plotly-dash-bootstrap-components
 navbar = dbc.NavbarSimple(
-    children=[
-        dbc.NavItem(dbc.NavLink("Page 1", href="/")),
-        dbc.DropdownMenu(
-            children=[
-                dbc.DropdownMenuItem("More pages", header=True),
-                dbc.DropdownMenuItem("Page 2", href="/app2"),
-                dbc.DropdownMenuItem("Page 3", href="/app2"),
-            ],
-            nav=True,
-            in_navbar=True,
-            label="More",
-        ),
-    ],
-    brand="Brand",
-    brand_href="#",
+    brand="Surrodash",
+    brand_href="/",
     color="dark",
     dark=True,
     fluid=True,
@@ -32,11 +19,13 @@ sidebar = html.Div(
         html.H2("Navigate", className="display-4"),
         html.Hr(),
         html.P(
-            "A simple sidebar layout with navigation links", className="lead"
+            "tools to interact with the datasets and surrogate models", className="lead"
         ),
         dbc.Nav(
             [
-                dcc.Link("Explore", href="/"),
+                dcc.Link("Explore Dataset", href="/explore"),
+                dcc.Link("Evaluate Models", href="/eval"),
+                dcc.Link("Train Models", href="/train"),
                 dcc.Link("Compare", href='/compare'),
             ],
             vertical=True,

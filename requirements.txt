@@ -1,3 +1,7 @@
 keras-tuner==1.0.2
 tensorflow==2.5.0rc1
 tensorflow-probability==0.12.2
+dash-core-components==1.15.0
+dash-html-components==1.1.2
+dash-renderer==1.9.0
+dash==1.19.0
