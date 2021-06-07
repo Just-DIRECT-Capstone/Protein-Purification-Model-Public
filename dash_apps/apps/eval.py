@@ -2,11 +2,11 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State, MATCH, ALL
+from pandas.io.formats.format import buffer_put_lines
 from dash_apps.shared_styles import *
 from dash_apps.apps.myapp import app
-import dash, dash_table
+import dash
 import os
-import plotly.express as px
 from plotly.tools import mpl_to_plotly as pltwrap
 import plotly.graph_objects as go
 
@@ -192,10 +192,11 @@ def new_graph(var, chart_var, old_fig):
         if len([var]) == 0:
             fig = old_fig
         else:
-            f, ids = vis.scatter_hats([MODEL],pDATA[0][0][0],
+            global sample_ids
+            f, sample_ids = vis.scatter_hats([MODEL],pDATA[0][0][0],
                     settings=settings,n_points = var, display_info=False, plot = chart_var.lower(),index=True)
             fig = pltwrap(f)
-            fig.update_traces(customdata=ids)
+            fig.update_traces(customdata=sample_ids)
         return fig
 
     else:
@@ -209,12 +210,11 @@ def new_graph(var, chart_var, old_fig):
 def display_analysis_graph(selectedData, div_children):
     ctx = dash.callback_context
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    print(button_id)
+
     if button_id == 'dummy-output_eval':
         div_children = []
-
-    elif (selectedData is not None) and (DATA is not None):
-        print(button_id)
+        
+    elif (any([s is not None for s in selectedData])) and (DATA is not None):
         new_child = dbc.Col(
             children=[
                 dbc.Row([
@@ -257,12 +257,14 @@ def display_analysis_graph(selectedData, div_children):
     Output({'type': 'dynamic-graph_analysis', 'index': MATCH}, 'figure'),
     [Input(component_id={'type': 'dynamic-var_analysis', 'index': MATCH}, component_property='value'),
      Input(component_id={'type': 'dynamic-choice_analysis', 'index': MATCH}, component_property='value'),
-     Input(component_id={'type': 'dynamic-graph_eval', 'index': MATCH}, component_property='selectedData')],
+     Input(component_id={'type': 'dynamic-graph_eval', 'index': ALL}, component_property='selectedData')],
      State({'type': 'dynamic-graph_analysis', 'index': MATCH}, 'figure')
 )
 def new_graph(var, chart_var, selectedData, old_fig):
     ctx = dash.callback_context
-    if selectedData is not None: ids = selectedData['points'][0]['customdata']
+    #print(selectedData)
+
+    if selectedData[0] is not None: ids = [s['customdata'] for s in selectedData[0]['points']]
     else: ids = DATA.index
 
     if ctx.triggered[0]["prop_id"] != '.':
@@ -270,13 +272,18 @@ def new_graph(var, chart_var, selectedData, old_fig):
         if len([var]) == 0:
             fig = old_fig
         else:
+            fig = go.Figure()
             if chart_var == 'count':
-                fig = px.histogram(DATA, x=var)
-                fig.add_trace(px.histogram(DATA.iloc[ids], x=var, color = 'red'))
+                fig.add_trace(go.Histogram(x=DATA.loc[sample_ids][var],histnorm='percent',name='all', bingroup=1))
+                fig.add_trace(go.Histogram(x=DATA.loc[ids][var],histnorm='percent',name='selection',bingroup=1))
                 fig.update_traces(opacity=0.75)
-            else:
-                fig = px.scatter(DATA, x=var, y=chart_var)
+                fig.update_layout(barmode='overlay', xaxis_title_text=var, yaxis_title_text='percent')
 
+            else:
+                fig.add_trace(go.Scatter(x=DATA.loc[sample_ids][var],y=DATA.loc[sample_ids][chart_var],mode='markers',name='all'))
+                fig.add_trace(go.Scatter(x=DATA.loc[ids][var],y=DATA.loc[ids][chart_var],mode='markers',name='selection'))
+                fig.update_traces(opacity=0.75)
+                fig.update_layout(xaxis_title_text=var, yaxis_title_text=chart_var)
         return fig
 
     else:
