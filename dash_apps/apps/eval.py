@@ -1,3 +1,5 @@
+"""imports"""
+import os
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
@@ -6,7 +8,6 @@ from pandas.io.formats.format import buffer_put_lines
 from dash_apps.shared_styles import *
 from dash_apps.apps.myapp import app
 import dash
-import os
 from plotly.tools import mpl_to_plotly as pltwrap
 import plotly.graph_objects as go
 
@@ -17,20 +18,26 @@ path = os.getcwd()
 # get all data in the private data directory
 data_files = [o[:-4] for o in sorted(os.listdir(os.path.join('just-private','data')))]
 # make a Dropdown Menu to select a dataset
-dropdown_data = lambda pick: [dbc.DropdownMenuItem(m, id = m, active = True) if i is pick else dbc.DropdownMenuItem(m, id = m,  active = False) for i,m in enumerate(data_files)]
+dropdown_data = lambda pick: [dbc.DropdownMenuItem(m, id = m,
+    active = True) if i is pick else dbc.DropdownMenuItem(m, id = m,
+        active = False) for i,m in enumerate(data_files)]
 
 DATA = None
 pDATA = None
 
 # get all saved models
-model_names = [o for o in sorted(os.listdir(os.path.join('surrogate_models','saved_models'))) if os.path.isdir(os.path.join('surrogate_models','saved_models',o))]
+model_names = [o for o in sorted(os.listdir(os.path.join('surrogate_models',
+    'saved_models'))) if os.path.isdir(os.path.join('surrogate_models','saved_models',o))]
 # make a Dropdown Menu to select a dataset
-dropdown_models = lambda pick: [dbc.DropdownMenuItem(m, id = m, active = True) if i is pick else dbc.DropdownMenuItem(m, id = m,  active = False) for i,m in enumerate(model_names)]
+dropdown_models = lambda pick: [dbc.DropdownMenuItem(m, id = m,
+    active = True) if i is pick else dbc.DropdownMenuItem(m, id = m,
+        active = False) for i,m in enumerate(model_names)]
 
 MODEL = None
 
 # make a button for plots
-plot_btn = dbc.Button(children = "Add Graph", outline=True, size = "lg", color="primary", className="mb-3", id="btn_plot_eval", n_clicks = 0)
+plot_btn = dbc.Button(children = "Add Graph", outline=True, size = "lg",
+        color="primary", className="mb-3", id="btn_plot_eval", n_clicks = 0)
 
 
 
@@ -54,7 +61,7 @@ content = html.Div(
                     children = dropdown_models(0),
                     right=False,
                     id = 'dd_model_eval'
-                ),            
+                ),
             ])
         ]),
 
@@ -83,6 +90,7 @@ layout = html.Div(
     [Input(m, "n_clicks") for m in data_files],
 )
 def update_dataset(*args):
+    """update the dataset"""
     ctx = dash.callback_context
     # this gets the id of the button that triggered the callback
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
@@ -106,17 +114,19 @@ def update_dataset(*args):
     [Input(m, "n_clicks") for m in model_names],
 )
 def update_model(*args):
+    """update the model"""
     ctx = dash.callback_context
     # this gets the id of the button that triggered the callback
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    
+
     try:
         new_pick = model_names.index(button_id)
     except:
         new_pick = 0
 
     global MODEL, settings
-    MODEL, settings = utils.load_model(os.path.join(path,'surrogate_models','saved_models',model_names[new_pick]))
+    MODEL, settings = utils.load_model(os.path.join(path,'surrogate_models',
+        'saved_models',model_names[new_pick]))
 
     return dropdown_models(new_pick), model_names[new_pick],[]
 
@@ -126,8 +136,11 @@ def update_model(*args):
    [Input('btn_plot_eval','n_clicks')],
    [State('container_eval','children')]
 )
-#This function is triggered when the add-chart clicks changes. This function is not triggered by changes in the state of the container_eval. If children changes, state saves the change in the callback.
+#This function is triggered when the add-chart clicks changes.
+#This function is not triggered by changes in the state of the container_eval.
+#If children changes, state saves the change in the callback.
 def display_graphs(n_clicks, div_children):
+    """display graphs"""
     ctx = dash.callback_context
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
     if button_id == 'dummy-output_eval':
@@ -171,11 +184,14 @@ def display_graphs(n_clicks, div_children):
 # callback to update the graphs with the selected variables and graph types
 @app.callback(
     Output({'type': 'dynamic-graph_eval', 'index': MATCH}, 'figure'),
-    [Input(component_id={'type': 'dynamic-var_eval', 'index': MATCH}, component_property='value'),
-     Input(component_id={'type': 'dynamic-choice_eval_eval', 'index': MATCH}, component_property='value')],
+    [Input(component_id={'type': 'dynamic-var_eval',
+        'index': MATCH}, component_property='value'),
+     Input(component_id={'type': 'dynamic-choice_eval_eval',
+         'index': MATCH}, component_property='value')],
      State({'type': 'dynamic-graph_eval', 'index': MATCH}, 'figure')
 )
 def new_graph(var, chart_var, old_fig):
+    """make new graph"""
     ctx = dash.callback_context
 
     if ctx.triggered[0]["prop_id"] != '.':
@@ -185,7 +201,8 @@ def new_graph(var, chart_var, old_fig):
         else:
             global sample_ids
             f, sample_ids = vis.scatter_hats([MODEL],pDATA[0][0][0],
-                    settings=settings,n_points = var, display_info=False, plot = chart_var.lower(),index=True)
+                    settings=settings,n_points = var,
+                    display_info=False, plot = chart_var.lower(),index=True)
             fig = pltwrap(f)
             fig.update_traces(customdata=sample_ids)
         return fig
@@ -195,16 +212,18 @@ def new_graph(var, chart_var, old_fig):
 
 @app.callback(
     Output('container_analysis','children'),
-    [Input(component_id={'type': 'dynamic-graph_eval', 'index': ALL}, component_property='selectedData')],
+    [Input(component_id={'type': 'dynamic-graph_eval',
+        'index': ALL}, component_property='selectedData')],
     [State('container_analysis','children')]
 )
 def display_analysis_graph(selectedData, div_children):
+    """display analysis graph"""
     ctx = dash.callback_context
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
     if button_id == 'dummy-output_eval':
         div_children = []
-        
+
     elif (any([s is not None for s in selectedData])) and (DATA is not None):
         new_child = dbc.Col(
             children=[
@@ -214,7 +233,8 @@ def display_analysis_graph(selectedData, div_children):
                         'index':len(div_children)
                     },
                     options=[{'label': 'Yield', 'value': 'yield'},
-                            {'label':'Purity', 'value': 'purity'},{'label':'Histogram', 'value': 'count'}
+                            {'label':'Purity', 'value':
+                                'purity'},{'label':'Histogram', 'value': 'count'}
                             ],
                     value='yield',
                 ), width = 2),
@@ -223,7 +243,9 @@ def display_analysis_graph(selectedData, div_children):
                         'type': 'dynamic-var_analysis',
                         'index': len(div_children)
                     },
-                    options=[{'label': var, 'value': var} for var in DATA.columns if var not in ['cut 1','cut 2','yield','purity']],
+                    options=[{'label': var, 'value':
+                        var} for var in DATA.columns if var not in ['cut 1',
+                            'cut 2','yield','purity']],
                     multi=False,
                     value = [],
                     placeholder='Select variable to plot...',
@@ -246,12 +268,16 @@ def display_analysis_graph(selectedData, div_children):
 # callback to update the graphs with the selected variables and graph types
 @app.callback(
     Output({'type': 'dynamic-graph_analysis', 'index': MATCH}, 'figure'),
-    [Input(component_id={'type': 'dynamic-var_analysis', 'index': MATCH}, component_property='value'),
-     Input(component_id={'type': 'dynamic-choice_analysis', 'index': MATCH}, component_property='value'),
-     Input(component_id={'type': 'dynamic-graph_eval', 'index': ALL}, component_property='selectedData')],
+    [Input(component_id={'type': 'dynamic-var_analysis', 'index':
+        MATCH}, component_property='value'),
+     Input(component_id={'type': 'dynamic-choice_analysis', 'index':
+         MATCH}, component_property='value'),
+     Input(component_id={'type': 'dynamic-graph_eval', 'index':
+         ALL}, component_property='selectedData')],
      State({'type': 'dynamic-graph_analysis', 'index': MATCH}, 'figure')
 )
 def new_graph(var, chart_var, selectedData, old_fig):
+    """update the graphs"""
     ctx = dash.callback_context
     #print(selectedData)
 
@@ -265,14 +291,19 @@ def new_graph(var, chart_var, selectedData, old_fig):
         else:
             fig = go.Figure()
             if chart_var == 'count':
-                fig.add_trace(go.Histogram(x=DATA.loc[sample_ids][var],histnorm='percent',name='all', bingroup=1))
-                fig.add_trace(go.Histogram(x=DATA.loc[ids][var],histnorm='percent',name='selection',bingroup=1))
+                fig.add_trace(go.Histogram(x=DATA.loc[sample_ids][var],
+                    histnorm='percent',name='all', bingroup=1))
+                fig.add_trace(go.Histogram(x=DATA.loc[ids][var],
+                    histnorm='percent',name='selection',bingroup=1))
                 fig.update_traces(opacity=0.75)
-                fig.update_layout(barmode='overlay', xaxis_title_text=var, yaxis_title_text='percent')
+                fig.update_layout(barmode='overlay', xaxis_title_text=var,
+                        yaxis_title_text='percent')
 
             else:
-                fig.add_trace(go.Scatter(x=DATA.loc[sample_ids][var],y=DATA.loc[sample_ids][chart_var],mode='markers',name='all'))
-                fig.add_trace(go.Scatter(x=DATA.loc[ids][var],y=DATA.loc[ids][chart_var],mode='markers',name='selection'))
+                fig.add_trace(go.Scatter(x=DATA.loc[sample_ids][var],
+                    y=DATA.loc[sample_ids][chart_var],mode='markers',name='all'))
+                fig.add_trace(go.Scatter(x=DATA.loc[ids][var],
+                    y=DATA.loc[ids][chart_var],mode='markers',name='selection'))
                 fig.update_traces(opacity=0.75)
                 fig.update_layout(xaxis_title_text=var, yaxis_title_text=chart_var)
         return fig
