@@ -105,8 +105,12 @@ def training_curves(models, y_data, settings, histories, smoothing = 1):
     """function for building training curves"""
     epochs = np.arange(settings['epochs'])
     markers = ['.','^'] # ok for two outputs only
-    plt.figure(figsize = (10*len(models)/3,10*len(models)))
+    if len(models) == 1:
+        f = plt.figure(figsize = (4*len(models),4*len(models)))
+    else:
+        f = plt.figure(figsize = (10*len(models)/3,10*len(models)))
     for i,mod in enumerate(models):
+
         model_name = utils.get_model_name(mod, settings['dataset'])
         plt.subplot(1,len(models),i+1)
         for j in range(len(y_data)):
@@ -136,3 +140,4 @@ def training_curves(models, y_data, settings, histories, smoothing = 1):
         plt.gca().set_aspect(1./plt.gca().get_data_ratio())
 
     plt.tight_layout()
+    return f

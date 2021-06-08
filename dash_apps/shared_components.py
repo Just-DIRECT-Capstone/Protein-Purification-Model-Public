@@ -100,4 +100,82 @@ def collapse(child, bttn_label, id):
             ),
         ]
 
-
+def train_setting(n_clicks):
+    return dbc.Col(
+            children=[
+        dbc.InputGroup(
+            [
+                dbc.InputGroupAddon("Model Name", addon_type="prepend"),
+                dbc.Input(
+                    id={'type':'dynamic-model-name',
+                        'index':n_clicks
+                    },
+                    value="mymodel_mydataset",debounce = True),
+            ],
+            className="mb-3",
+        ),
+        dbc.InputGroup(
+            [
+                dbc.InputGroupAddon("Hidden Units", addon_type="prepend"),
+                dbc.Input(
+                    id={'type':'dynamic-hidden-units',
+                        'index':n_clicks
+                    },
+                    value="[16,8,4]",debounce = True),
+            ],
+            className="mb-3",
+        ),
+         dbc.InputGroup(
+            [
+                dbc.InputGroupAddon("Model Output", addon_type="prepend"),
+                dbc.Select(
+                    id={'type':'dynamic-model-output',
+                        'index':n_clicks
+                    },
+                    options=[
+                        {"label": "deterministc", "value": 'D'},
+                        {"label": "probabilistic", "value": 'P'},
+                    ],
+                    value = 'D',
+                ),
+            ],
+            className="mb-3"
+        ),
+        dbc.InputGroup(
+            [
+                dbc.InputGroupAddon("Learning Rate", addon_type="prepend"),
+                dbc.Input(
+                    id={'type':'dynamic-learning-rate',
+                        'index':n_clicks
+                    },
+                    value="0.01", type = 'numeric',debounce = True),
+            ],
+            className="mb-3",
+        ),
+        dbc.InputGroup(
+            [
+                dbc.InputGroupAddon("Epochs", addon_type="prepend"),
+                dbc.Input(
+                    id={'type':'dynamic-epochs',
+                        'index':n_clicks
+                    },
+                    value="100", type = 'numeric',debounce = True),
+            ],
+            className="mb-3",
+        ),
+        dbc.InputGroup(
+            [
+                dbc.InputGroupAddon("Cross Validation", addon_type="prepend"),
+                dbc.Input(
+                    id={'type':'dynamic-cv',
+                        'index':n_clicks
+                    },
+                    value="1", type = 'numeric',debounce = True),
+            ],
+            className="mb-3",
+        ),
+        dbc.Button(children = "Save Model", outline=True, color="primary", className="mb-3", n_clicks = 0,
+                    id={'type':'dynamic-start',
+                        'index':n_clicks
+                    },)
+        ],width = 3)

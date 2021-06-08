@@ -60,6 +60,7 @@ content = html.Div(
 
         dbc.Row(dbc.Col(plot_btn)),
         dbc.Row(id = 'container_eval', children = []),
+        dbc.Row([dbc.Col(html.H1(children=''), width = 9),]),
         dbc.Row(id = 'container_analysis', children = []),
 
     ],
@@ -164,16 +165,6 @@ def display_graphs(n_clicks, div_children):
             ],
         width = 4)
         div_children.append(new_child)
-
-    # elif button_id == 'dummy-output4_eval':
-    #     for c,child in enumerate(div_children):
-    #         try:
-    #             for l,line in enumerate(child['props']['children'][1]['props']['figure']['data']):
-    #                 old_data = div_children[c]['props']['children'][1]['props']['figure']['data'][l]['y']
-    #                 var = div_children[c]['props']['children'][1]['props']['figure']['data'][l]['legendgroup']
-    #                 div_children[c]['props']['children'][1]['props']['figure']['data'][l]['y'] = data[var].iloc[:len(old_data)].tolist()
-    #         except:
-    #             pass
 
     return div_children
 
