@@ -1,4 +1,4 @@
-# the style arguments for the sidebar. We use position:fixed and a fixed width
+"""the style arguments for the sidebar. We use position:fixed and a fixed width"""
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 62.5,

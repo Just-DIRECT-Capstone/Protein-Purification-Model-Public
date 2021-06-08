@@ -61,12 +61,7 @@ This dash app provides visualization of data produced by the MM to show general 
 
 After running the setup.sh file, you can also use our example notebooks in our `surrogate_modeling/notebooks` folder. The example notebooks here include notes on how to run K-fold cross validation on the models, how to train and visualize your model accuracy, and how to save your models.
 
-## Project Analysis
-
-### Best Practices for the Mechanistic Model
-Talk about how to use the mechanistic model
-
-### Model Characterization
+## Model Characterization
 We compared our models' performance on data of different size and data generated with different isotherm types and different resin types. Our comparison notebooks can be found in the `surrogate_models/notebooks/development_notebooks` folder, but indicate that our model is fairly accurate at training/testing on data of different isotherm type. The model accuracy is greatly decreased as dataset size decreases and the model cannot predict on data if it's been trained with a different resin type. This is due to the column parameters related to each resin type in the mechanistic model. To accurately test for a certain resin type, you have to train the model on that same resin type.
 
 ## Future Goals and Next Steps
@@ -92,6 +87,8 @@ In the future, we'd also be interested in comparing our current model performanc
 
 Further visualizations in the Dash platform could also help our users; if you're interested in seeing a new visualization added, open an issue and let us know!
 
-### Other 
+In the data comparison dash tool, it would also be helpful to provide quantitative statistical analyses (analysis of variance) that detail if the "inaccurate" data in a graph are actually statistically different than the "accurate" data of the graph so that the user can understand which parameters break the model.
+
+### ML Modeling in Biotech
 
 The predictive process could be sped up even more by removing the need for the mechanistic model entirely. A NN that maps protein sequence/structure to yield and purity would greatly speed the molecular design process, although challenges with this idea would likely be finding enough sequence + structure to yield + purity data to train a robust NN. We hope to investigate this idea in the future.

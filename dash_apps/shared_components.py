@@ -1,8 +1,9 @@
+"""imports"""
+import copy
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash_apps.shared_styles import *
-import copy
 
 # https://stackoverflow.com/questions/62732631/how-to-collapsed-sidebar-in-dash-plotly-dash-bootstrap-components
 navbar = dbc.NavbarSimple(
@@ -36,9 +37,11 @@ sidebar = html.Div(
     style=SIDEBAR_STYLE,
 )
 
-sidebar_btn = dbc.Button(children = "<", outline=True, size = "sm", color="secondary", n_clicks =0, className="mr-1", id="btn_sidebar", style = SIDEBAR_BTN_STYLE)
+sidebar_btn = dbc.Button(children = "<", outline=True, size = "sm", color="secondary",
+        n_clicks =0, className="mr-1", id="btn_sidebar", style = SIDEBAR_BTN_STYLE)
 
 def NamedSlider(name, **kwargs):
+    """name slider"""
     other = kwargs.pop('other')
 
     if other['type'] == 'slider-input':
@@ -75,6 +78,7 @@ def NamedSlider(name, **kwargs):
 
 
 def generate_table(dataframe, max_rows=20):
+    """generate table"""
     return html.Table([
         html.Thead(
             html.Tr([html.Th(col) for col in dataframe.columns])
@@ -87,6 +91,7 @@ def generate_table(dataframe, max_rows=20):
     ])
 
 def collapse(child, bttn_label, id):
+    """collapse"""
     return [
             dbc.Button(
                 bttn_label,
@@ -101,6 +106,7 @@ def collapse(child, bttn_label, id):
         ]
 
 def train_setting(n_clicks):
+    """train setting"""
     return dbc.Col(
             children=[
         dbc.InputGroup(
@@ -174,7 +180,8 @@ def train_setting(n_clicks):
             ],
             className="mb-3",
         ),
-        dbc.Button(children = "Save Model", outline=True, color="primary", className="mb-3", n_clicks = 0,
+        dbc.Button(children = "Save Model", outline=True, color="primary",
+                className="mb-3", n_clicks = 0,
                     id={'type':'dynamic-start',
                         'index':n_clicks
                     },)
