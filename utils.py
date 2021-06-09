@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 
-def load_data(parentdir, filename, filepath = ['just-private','data']):
+def load_data(parentdir, filename, filepath = ['sample_datasets']):
     """Load data from a .csv file into a dataframe.
 
     Parameters

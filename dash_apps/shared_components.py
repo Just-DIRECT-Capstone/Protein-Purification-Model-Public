@@ -4,6 +4,7 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash_apps.shared_styles import *
+from dash_apps.apps.myapp import app
 
 # https://stackoverflow.com/questions/62732631/how-to-collapsed-sidebar-in-dash-plotly-dash-bootstrap-components
 navbar = dbc.NavbarSimple(
@@ -24,14 +25,37 @@ sidebar = html.Div(
         ),
         dbc.Nav(
             [
-                dcc.Link("Explore Dataset", href="/explore"),
-                dcc.Link("Evaluate Models", href="/eval"),
-                dcc.Link("Train Models", href="/train"),
-                dcc.Link("Compare", href='/compare'),
+                dcc.Link("Explore Dataset\n", href="/explore"),
+                dcc.Link("Evaluate Models\n", href="/eval"),
+                dcc.Link("Train Models\n", href="/train"),
+                dcc.Link("Compare\n", href='/compare'),
             ],
             vertical=True,
             pills=True,
         ),
+        html.Hr(),
+        html.Img(src=app.get_asset_url('Surrodash_Logo.JPG'), 
+                style={
+                    'height' : '22%',
+                    'width' : '66%',
+                    'float' : 'middle',
+                    'position' : 'relative',
+                    'padding-top' : 0,
+                    'padding-right' : 0
+                }),
+        html.H4("Check us out!"),
+        html.A([
+            html.Img(
+                src=app.get_asset_url('github.png'),
+                style={
+                    'height' : '25%',
+                    'width' : '90%',
+                    'float' : 'middle',
+                    'position' : 'relative',
+                    'padding-top' : 0,
+                    'padding-right' : 0
+                })
+            ], href='https://github.com/Just-DIRECT-Capstone/Protein-Purification-Model-Public'),
     ],
     id="sidebar",
     style=SIDEBAR_STYLE,

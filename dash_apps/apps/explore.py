@@ -12,7 +12,7 @@ import utils
 
 path = os.getcwd()
 # get all data in the private data directory
-data_files = [o[:-4] for o in sorted(os.listdir(os.path.join('just-private','data')))]
+data_files = [o[:-4] for o in sorted(os.listdir(os.path.join('sample_datasets')))]
 # make a Dropdown Menu to select a dataset
 dropdown_data = lambda pick: [dbc.DropdownMenuItem(m, id = m, active = True) if i is pick else dbc.DropdownMenuItem(m, id = m,  active = False) for i,m in enumerate(data_files)]
 
