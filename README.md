@@ -1,6 +1,7 @@
 # Protein-Purification-Model-Public
 [![Build Status](https://travis-ci.com/Just-DIRECT-Capstone/Protein-Purification-Model-Public.svg?branch=main)](https://travis-ci.com/Just-DIRECT-Capstone/Protein-Purification-Model-Public)
 [![Coverage Status](https://coveralls.io/repos/github/Just-DIRECT-Capstone/Protein-Purification-Model-Public/badge.svg?branch=main)](https://coveralls.io/github/Just-DIRECT-Capstone/Protein-Purification-Model-Public?branch=main)
+![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
 
 ![DIRECT_projectcuration](https://live.staticflickr.com/65535/51234943019_faa481db4e_m.jpg)
 # Surrodash by Just: a Capstone Project (JCP)
